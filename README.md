@@ -18,6 +18,11 @@ GitHub Pages：<https://pyangchen.github.io/loop-comp-calculator/>
 - 計算 Rc、Cc、Cf 元件值
 - 繪製開迴路波德圖（增益 & 相位）
 
+### IBB 模式（Inverting Buck-Boost）
+- 兩顆 IC 皆支援 IBB 拓樸，透過等效替換（程式 V<sub>IN</sub> = V<sub>IN,real</sub> + |V<sub>OUT</sub>|）沿用 Buck 補償流程
+- 自動計算 RHP Zero：**f<sub>RHPZ</sub> = (1−D)² × R<sub>LOAD</sub> / (2π × L × D)**
+- 依 f<sub>C</sub> / f<sub>RHPZ</sub> 比值以顏色警示穩定性（建議 f<sub>C</sub> < f<sub>RHPZ</sub> / 5）
+
 ### 使用說明
 - 內建第三個分頁，比較兩顆 IC 的補償架構差異與設計流程
 

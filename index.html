@@ -624,7 +624,7 @@
 
       <h4>IBB 模式（逆轉升降壓）RHP Zero</h4>
       <span class="f">等效替換：IBB Vin=12V, Vout=−3V → 程式輸入 Vin=15V, Vo=3V（D 相同）</span>
-      <span class="f">f<sub>RHPZ</sub> = (1−D)² × R<sub>o</sub> / (2π × L)</span>
+      <span class="f">f<sub>RHPZ</sub> = (1−D)² × R<sub>o</sub> / (2π × L × D)</span>
       <span class="f">幅度貢獻：+10log(1 + (f/f<sub>RHPZ</sub>)²) — 與 LHP 零點相同，增益上升</span>
       <span class="f">相位貢獻：−atan(f/f<sub>RHPZ</sub>) — 消耗相位（與極點相同）</span>
       <span class="fnote">設計規則：fc &lt; f<sub>RHPZ</sub>/5～1/10（程式自動警告）</span>
@@ -942,7 +942,7 @@
 
       <h4>IBB 模式（逆轉升降壓）RHP Zero</h4>
       <span class="f">等效替換：IBB Vin=12V, Vout=−3V → 程式輸入 Vin=15V, Vout=3V（D 相同）</span>
-      <span class="f">f<sub>RHPZ</sub> = (1−D)² × R<sub>LOAD</sub> / (2π × L)</span>
+      <span class="f">f<sub>RHPZ</sub> = (1−D)² × R<sub>LOAD</sub> / (2π × L × D)</span>
       <span class="f">幅度貢獻：+10log(1 + (f/f<sub>RHPZ</sub>)²) — 與 LHP 零點相同，增益上升</span>
       <span class="f">相位貢獻：−atan(f/f<sub>RHPZ</sub>) — 消耗相位（與極點相同）</span>
       <span class="fnote">設計規則：fc &lt; f<sub>RHPZ</sub>/5～1/10（程式自動警告）</span>
@@ -1298,7 +1298,7 @@
     <h3>3.3 RHP Zero — IBB 的關鍵差異</h3>
     <p>IBB/Boost 拓樸存在一個標準 Buck <span class="guide-warn">不具有的</span> Right-Half-Plane Zero（RHP 零點）：</p>
     <p style="text-align:center; font-size:14px; font-weight:600; margin: 12px 0;">
-      f<sub>RHPZ</sub> = (1 − D)² × R<sub>LOAD</sub> / (2π × L)
+      f<sub>RHPZ</sub> = (1 − D)² × R<sub>LOAD</sub> / (2π × L × D)
     </p>
     <p>RHP Zero 的特殊性質：</p>
     <table class="guide-table">
@@ -1618,7 +1618,7 @@ function calculate() {
   const ibbMode = document.getElementById('ibb-mode').checked;
   let wRHPZ = 0;
   if (ibbMode) {
-    const fRHPZ = (1 - D) * (1 - D) * Ro / (2 * Math.PI * L);
+    const fRHPZ = (1 - D) * (1 - D) * Ro / (2 * Math.PI * L * D);
     wRHPZ = 2 * Math.PI * fRHPZ;
     document.getElementById('out-fRHPZ').textContent = engSI(fRHPZ, 'Hz');
     document.getElementById('rhpz-row-isl').style.display = '';
@@ -2267,7 +2267,7 @@ function calculateMax() {
       maxWarn('IBB 模式：請確認 VIN > VOUT 且 L > 0');
     } else {
       const D_max = VOUT / Vin_max;
-      const fRHPZ_max = (1 - D_max) * (1 - D_max) * RLOAD / (2 * Math.PI * L_max);
+      const fRHPZ_max = (1 - D_max) * (1 - D_max) * RLOAD / (2 * Math.PI * L_max * D_max);
       wRHPZ_max = 2 * Math.PI * fRHPZ_max;
       s('m-out-frhpz').textContent = engSI(fRHPZ_max, 'Hz');
       document.getElementById('rhpz-row-max').style.display = '';
