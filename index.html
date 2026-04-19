@@ -326,6 +326,9 @@
   }
   .export-pdf-btn:hover { background: var(--primary-dark); }
   .pdf-exporting .export-pdf-btn { display: none !important; }
+  /* PDF 匯出時強制隱藏「公式說明」展開內容，避免 html2canvas 疊畫到結果區 */
+  .pdf-exporting details.formula-ref > *:not(summary) { display: none !important; }
+  .pdf-exporting details.formula-ref summary { border-radius: 8px !important; }
 
   /* ── IBB / RHP Zero warning ── */
   .rhpz-warn {
@@ -1450,6 +1453,15 @@ function exportTabPdf(tabId, filePrefix) {
   const filename = `${filePrefix}_${stamp}.pdf`;
 
   el.classList.add('pdf-exporting');
+  // 暫時關閉所有「公式說明」details，匯出後還原
+  const openDetails = Array.from(el.querySelectorAll('details.formula-ref[open]'));
+  openDetails.forEach(d => d.removeAttribute('open'));
+
+  const restore = () => {
+    el.classList.remove('pdf-exporting');
+    openDetails.forEach(d => d.setAttribute('open', ''));
+  };
+
   const opt = {
     margin:       [10, 10, 10, 10],
     filename:     filename,
@@ -1459,8 +1471,8 @@ function exportTabPdf(tabId, filePrefix) {
     pagebreak:    { mode: ['avoid-all', 'css', 'legacy'] }
   };
   html2pdf().set(opt).from(el).save()
-    .then(() => el.classList.remove('pdf-exporting'))
-    .catch(err => { el.classList.remove('pdf-exporting'); console.error(err); alert('PDF 匯出失敗：' + err); });
+    .then(restore)
+    .catch(err => { restore(); console.error(err); alert('PDF 匯出失敗：' + err); });
 }
 
 // ── Engineering notation helpers ──────────────────────────────────────────────
@@ -1637,7 +1649,7 @@ function calculate() {
   }
 
   _bode = { Gdc, wp, wi, wz, wRHPZ, R1, R3, C1, C2, C3, fp, fi, fc, fp2, fsw };
-  _baseInputs = { Vin, Iout, fsw, L, Co, Ri, R1, wz, fc, fp2 };
+  _baseInputs = { Vin, Iout, fsw, L, Co, Ri, R1, wz, fc, fp2, ibbMode };
   _bodeActual = null;
 
   // Pre-fill actual component inputs with calculated values
@@ -1700,8 +1712,15 @@ function updateActualBode() {
   const wp_act  = (1 / b.Co) * (1 / Ro_act + 1 / (Km_act * b.Ri));
   const wi_act  = Km_act * b.Ri / b.L;
 
+  // IBB mode: recompute RHP zero with actual D, Ro
+  let wRHPZ_act = 0;
+  if (b.ibbMode) {
+    const fRHPZ_act = (1 - D_act) * (1 - D_act) * Ro_act / (2 * Math.PI * b.L * D_act);
+    wRHPZ_act = 2 * Math.PI * fRHPZ_act;
+  }
+
   _bodeActual = {
-    Gdc: Gdc_act, wp: wp_act, wi: wi_act, wz: b.wz,
+    Gdc: Gdc_act, wp: wp_act, wi: wi_act, wz: b.wz, wRHPZ: wRHPZ_act,
     R1: b.R1, R3: R3act, C1: C1act, C2: C2act, C3: C3act,
     fp: wp_act / (2 * Math.PI), fi: wi_act / (2 * Math.PI),
     fc: b.fc, fp2: b.fp2, fsw: b.fsw, Vo_act
