@@ -1,0 +1,17 @@
+# macOS
+.DS_Store
+
+# Local analysis scripts (this repo only publishes index.html via GitHub Pages)
+*.py
+__pycache__/
+*.pyc
+
+# Generated outputs & deliverables
+*.pptx
+*.pdf
+screenshots/
+tmp_slides/
+
+# Project notes / style guides (local)
+CLAUDE.md
+slide_style_guide.md
