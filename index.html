@@ -760,8 +760,28 @@
     <div class="card">
       <div class="card-title">實際元件值 Actual Component Values</div>
       <p style="font-size:12px; color:var(--muted); margin-bottom:14px;">
-        輸入實際購買的元件值（已預填計算值），更新後將以青色/紅色疊加於波德圖上。
+        輸入實際購買的元件值（已預填計算值），更新後將以青色/紅色疊加於波德圖上。<br>
+        也可使用下方「建議標準值」按鈕，依所選精度自動對齊到 E-series 市售值。
       </p>
+      <div style="display:flex; flex-wrap:wrap; gap:12px; align-items:flex-end; margin-bottom:14px; padding:12px; background:var(--group-bg); border-radius:8px;">
+        <div class="field" style="flex:0 0 150px; margin:0;">
+          <label><span class="sym">電阻精度</span><span class="desc">R<sub>2</sub>, R<sub>3</sub></span></label>
+          <div class="input-wrap"><select id="isl-esr-r" style="flex:1; border:none; outline:none; padding:7px 10px; font-size:14px; background:transparent; color:var(--text);">
+            <option value="E24">E24 (5%)</option>
+            <option value="E48">E48 (2%)</option>
+            <option value="E96" selected>E96 (1%)</option>
+          </select></div>
+        </div>
+        <div class="field" style="flex:0 0 150px; margin:0;">
+          <label><span class="sym">電容精度</span><span class="desc">C<sub>1</sub>, C<sub>2</sub>, C<sub>3</sub></span></label>
+          <div class="input-wrap"><select id="isl-esr-c" style="flex:1; border:none; outline:none; padding:7px 10px; font-size:14px; background:transparent; color:var(--text);">
+            <option value="E6">E6 (20%)</option>
+            <option value="E12">E12 (10%)</option>
+            <option value="E24" selected>E24 (5%)</option>
+          </select></div>
+        </div>
+        <button class="btn" style="flex:0 0 auto; width:auto; padding:9px 18px; margin-top:0;" onclick="suggestStandardValues()">建議標準值 Suggest</button>
+      </div>
       <div class="input-grid">
         <div class="field">
           <label><span class="sym">R<sub>2</sub></span><span class="desc">回授下分壓電阻（實際）</span></label>
@@ -1058,8 +1078,28 @@
     <div class="card">
       <div class="card-title">實際元件值 Actual Component Values</div>
       <p style="font-size:12px; color:var(--muted); margin-bottom:14px;">
-        輸入實際購買的元件值（已預填計算值），更新後以青色/紅色疊加於波德圖。
+        輸入實際購買的元件值（已預填計算值），更新後以青色/紅色疊加於波德圖。<br>
+        也可使用下方「建議標準值」按鈕，依所選精度自動對齊到 E-series 市售值。
       </p>
+      <div style="display:flex; flex-wrap:wrap; gap:12px; align-items:flex-end; margin-bottom:14px; padding:12px; background:var(--group-bg); border-radius:8px;">
+        <div class="field" style="flex:0 0 150px; margin:0;">
+          <label><span class="sym">電阻精度</span><span class="desc">R<sub>c</sub></span></label>
+          <div class="input-wrap"><select id="max-esr-r" style="flex:1; border:none; outline:none; padding:7px 10px; font-size:14px; background:transparent; color:var(--text);">
+            <option value="E24">E24 (5%)</option>
+            <option value="E48">E48 (2%)</option>
+            <option value="E96" selected>E96 (1%)</option>
+          </select></div>
+        </div>
+        <div class="field" style="flex:0 0 150px; margin:0;">
+          <label><span class="sym">電容精度</span><span class="desc">C<sub>c</sub>, C<sub>f</sub></span></label>
+          <div class="input-wrap"><select id="max-esr-c" style="flex:1; border:none; outline:none; padding:7px 10px; font-size:14px; background:transparent; color:var(--text);">
+            <option value="E6">E6 (20%)</option>
+            <option value="E12">E12 (10%)</option>
+            <option value="E24" selected>E24 (5%)</option>
+          </select></div>
+        </div>
+        <button class="btn" style="flex:0 0 auto; width:auto; padding:9px 18px; margin-top:0;" onclick="suggestStandardValuesMax()">建議標準值 Suggest</button>
+      </div>
       <div class="input-grid">
         <div class="field">
           <label><span class="sym">R<sub>c</sub></span><span class="desc">補償電阻（實際）</span></label>
@@ -1400,7 +1440,56 @@
       <li>比較理想曲線（藍/橙）與實際曲線（青/紅）的 PM 和 GM 差異</li>
     </ol>
 
-    <h3>4.3 IBB 模式</h3>
+    <h3>4.3 E-series 建議標準值（自動挑選市售值）</h3>
+    <p>不想手動查表對齊標準值？「實際元件值」卡片上方的工具列可依指定精度自動把計算值對齊到 E-series 市售品，並立即重畫 Bode 圖。</p>
+    <ol>
+      <li>先按「計算」取得最佳化元件值（必要步驟）</li>
+      <li>在「實際元件值」卡片頂端的工具列選擇：
+        <ul>
+          <li><span class="guide-em">電阻精度</span>：E24 (5%) / E48 (2%) / E96 (1%)，預設 E96</li>
+          <li><span class="guide-em">電容精度</span>：E6 (20%) / E12 (10%) / E24 (5%)，預設 E24</li>
+        </ul>
+      </li>
+      <li>按「<span class="guide-em">建議標準值 Suggest</span>」→ 五個（ISL8117A）或三個（MAX20098）實際元件欄位會被對齊到最接近的 E-series 值，並自動觸發 Bode 圖更新</li>
+      <li>觀察疊加後的實際曲線（青/紅）是否仍滿足 PM &gt; 45°、GM &gt; 10dB</li>
+      <li>如需微調，可針對單一元件再手動輸入值後按「更新波德圖」覆蓋建議結果（例如只替換 C<sub>3</sub>）</li>
+    </ol>
+    <p style="font-size:12px; color:var(--muted); margin-top:8px;">
+      鄰近值選取採<span class="guide-em"> log-scale 最近</span>（等同百分比誤差最小），跨 decade 亦能正確對齊。若切換精度後按鈕再按一次，欄位會以新的精度重算並重畫。</p>
+    <table class="guide-table">
+      <tr>
+        <th>精度選項</th>
+        <th>常見用途</th>
+        <th>備註</th>
+      </tr>
+      <tr>
+        <td>R: E96 (1%)</td>
+        <td>薄膜/金屬皮膜精密電阻</td>
+        <td>補償網路建議首選</td>
+      </tr>
+      <tr>
+        <td>R: E24 (5%)</td>
+        <td>碳膜一般電阻</td>
+        <td>成本敏感應用</td>
+      </tr>
+      <tr>
+        <td>C: E24 (5%)</td>
+        <td>C0G/NP0 陶瓷電容（pF 級）</td>
+        <td>補償 Cc/C1/C3 首選</td>
+      </tr>
+      <tr>
+        <td>C: E12 (10%)</td>
+        <td>X7R 陶瓷電容（nF~µF 級）</td>
+        <td>容值較大時常見</td>
+      </tr>
+      <tr>
+        <td>C: E6 (20%)</td>
+        <td>Y5V / 電解電容</td>
+        <td>精度要求低時使用</td>
+      </tr>
+    </table>
+
+    <h3>4.4 IBB 模式</h3>
     <ol>
       <li>在電源級參數區勾選「<span class="guide-em">IBB 模式</span>」</li>
       <li>V<sub>IN</sub> 填入 <span class="guide-em">V<sub>IN,real</sub> + |V<sub>OUT</sub>|</span>（例如 12V 轉 −3V → V<sub>IN</sub> = 15V）</li>
@@ -1416,11 +1505,11 @@
       <li>若警告出現，降低 f<sub>C</sub> 重新計算</li>
     </ol>
 
-    <h3>4.4 公式說明</h3>
+    <h3>4.5 公式說明</h3>
     <p>每個分頁的「計算」按鈕上方都有可折疊的「<span class="guide-em">公式說明 Formula Reference</span>」，
        點擊展開可查看所有計算公式、Bode 圖表達式以及 PM/GM 的定義。</p>
 
-    <h3>4.5 注意事項</h3>
+    <h3>4.6 注意事項</h3>
     <ul>
       <li>本程式假設連續導通模式（CCM），不適用於 DCM 或 BCM</li>
       <li>ISL8117A 的 V<sub>si</sub>（斜率補償）使用 datasheet 近似公式，極端工作點可能偏差</li>
@@ -1507,6 +1596,41 @@ function engSI(val, unit) {
 function fmt(val, unit, decimals = 4) {
   if (!isFinite(val) || isNaN(val)) return '—';
   return parseFloat(val.toFixed(decimals)) + (unit ? ' ' + unit : '');
+}
+
+// ── E-series standard values (IEC 60063) ──────────────────────────────────────
+
+const E_SERIES = {
+  E6:  [10,15,22,33,47,68],
+  E12: [10,12,15,18,22,27,33,39,47,56,68,82],
+  E24: [10,11,12,13,15,16,18,20,22,24,27,30,33,36,39,43,47,51,56,62,68,75,82,91],
+  E48: [100,105,110,115,121,127,133,140,147,154,162,169,178,187,196,205,215,226,
+        237,249,261,274,287,301,316,332,348,365,383,402,422,442,464,487,511,536,
+        562,590,619,649,681,715,750,787,825,866,909,953],
+  E96: [100,102,105,107,110,113,115,118,121,124,127,130,133,137,140,143,147,150,
+        154,158,162,165,169,174,178,182,187,191,196,200,205,210,215,221,226,232,
+        237,243,249,255,261,267,274,280,287,294,301,309,316,324,332,340,348,357,
+        365,374,383,392,402,412,422,432,442,453,464,475,487,499,511,523,536,549,
+        562,576,590,604,619,634,649,665,681,698,715,732,750,768,787,806,825,845,
+        866,887,909,931,953,976]
+};
+
+// Round a value to the nearest E-series standard value (log-scale nearest).
+function roundToESeries(value, series) {
+  if (!(value > 0) || !E_SERIES[series]) return value;
+  const base = E_SERIES[series];
+  const norm = (series === 'E48' || series === 'E96') ? 100 : 10;
+  const logV = Math.log10(value);
+  let best = base[0] / norm, bestErr = Infinity;
+  for (let d = -15; d <= 9; d++) {
+    const scale = Math.pow(10, d);
+    for (const b of base) {
+      const v = (b / norm) * scale;
+      const err = Math.abs(Math.log10(v) - logV);
+      if (err < bestErr) { best = v; bestErr = err; }
+    }
+  }
+  return best;
 }
 
 // ── Main calculation ───────────────────────────────────────────────────────────
@@ -1648,7 +1772,7 @@ function calculate() {
     document.getElementById('rhpz-warn-isl').className = 'rhpz-warn';
   }
 
-  _bode = { Gdc, wp, wi, wz, wRHPZ, R1, R3, C1, C2, C3, fp, fi, fc, fp2, fsw };
+  _bode = { Gdc, wp, wi, wz, wRHPZ, R1, R2, R3, C1, C2, C3, fp, fi, fc, fp2, fsw };
   _baseInputs = { Vin, Iout, fsw, L, Co, Ri, R1, wz, fc, fp2, ibbMode };
   _bodeActual = null;
 
@@ -1726,6 +1850,26 @@ function updateActualBode() {
     fc: b.fc, fp2: b.fp2, fsw: b.fsw, Vo_act
   };
   drawBode();
+}
+
+function suggestStandardValues() {
+  if (!_bode) { showWarn('請先按「計算」取得最佳化元件值'); return; }
+  const rSeries = document.getElementById('isl-esr-r').value;
+  const cSeries = document.getElementById('isl-esr-c').value;
+
+  const R2s = roundToESeries(_bode.R2, rSeries);
+  const R3s = roundToESeries(_bode.R3, rSeries);
+  const C1s = roundToESeries(_bode.C1, cSeries);
+  const C2s = roundToESeries(_bode.C2, cSeries);
+  const C3s = roundToESeries(_bode.C3, cSeries);
+
+  document.getElementById('act-R2').value = parseFloat((R2s / 1e3).toPrecision(4));
+  document.getElementById('act-R3').value = parseFloat((R3s / 1e3).toPrecision(4));
+  document.getElementById('act-C1').value = parseFloat((C1s / 1e-12).toPrecision(4));
+  document.getElementById('act-C2').value = parseFloat((C2s / 1e-12).toPrecision(4));
+  document.getElementById('act-C3').value = parseFloat((C3s / 1e-12).toPrecision(4));
+
+  updateActualBode();
 }
 
 function gloopMagPhase(f, p) {
@@ -2328,6 +2472,22 @@ function updateActualBodeMax() {
   const b = _baseMax;
   _bodeMaxActual = { ...b, RC: RC_act, CC: CC_act, CF: CF_act };
   drawBodeMax();
+}
+
+function suggestStandardValuesMax() {
+  if (!_bodeMax) { maxWarn('請先按「計算」取得最佳化元件值'); return; }
+  const rSeries = document.getElementById('max-esr-r').value;
+  const cSeries = document.getElementById('max-esr-c').value;
+
+  const RCs = roundToESeries(_bodeMax.RC, rSeries);
+  const CCs = roundToESeries(_bodeMax.CC, cSeries);
+  const CFs = _bodeMax.CF > 0 ? roundToESeries(_bodeMax.CF, cSeries) : 0;
+
+  document.getElementById('mact-rc').value = parseFloat((RCs / 1e3).toPrecision(4));
+  document.getElementById('mact-cc').value = parseFloat((CCs / 1e-12).toPrecision(4));
+  document.getElementById('mact-cf').value = CFs > 0 ? parseFloat((CFs / 1e-12).toPrecision(4)) : 0;
+
+  updateActualBodeMax();
 }
 
 // ── Bode plot for MAX20098 ─────────────────────────────────────────────────────
